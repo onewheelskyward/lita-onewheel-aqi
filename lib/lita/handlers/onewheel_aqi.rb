@@ -26,6 +26,7 @@ module Lita
         observed_aqi = JSON.parse(observed_response)
 
         puts forecasted_aqi.inspect
+        puts observed_aqi.inspect
         if forecasted_aqi.nil? or observed_aqi.nil?
           response.reply "No AQI data for #{loc[:name]}."
           Lita.logger.info "No data found for #{response.matches[0][0]}"
