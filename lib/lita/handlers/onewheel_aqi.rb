@@ -39,7 +39,7 @@ module Lita
             observed_aqi = o
           end
         end
-        response.reply "AQI for #{loc[:name]}, Forecasted: #{forecasted_aqi["AQI"]} #{forecasted_aqi["Category"]["Name"]} -- Observed: #{observed_aqi["AQI"]} #{observed_aqi["Category"]["Name"]}"
+        response.reply "AQI for #{loc[:name]}, Forecasted: #{forecasted_aqi["AQI"]} #{forecasted_aqi["Category"]["Name"]} -- Observed: #{observed_aqi["AQI"]} #{observed_aqi["Category"]["Name"]}."
       end
 
       # Geographical stuffs
