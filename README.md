@@ -20,3 +20,11 @@ TODO: Describe any configuration attributes the plugin exposes.
 ## Usage
 
 TODO: Describe the plugin's features and how to use them.
+
+http://airnowapi.org/CurrentObservationsByLatLon/query
+
+http://airnowapi.org/aq101
+
+http://airnowapi.org/forecastsbylatlon/docs
+
+http://airnowapi.org/webservices
