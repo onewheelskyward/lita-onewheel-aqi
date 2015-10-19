@@ -68,7 +68,6 @@ module Lita
       def optimistic_geo_wrapper(query)
         geocoded = nil
         result = ::Geocoder.search(query)
-        # Lita.logger.debug "Geocoder result: '#{result.inspect}'"
         if result[0]
           geocoded = result[0].data
         end
@@ -76,20 +75,16 @@ module Lita
       end
 
       def geo_lookup(query)
+        geocoded = optimistic_geo_wrapper query
+
         if (query.nil? or query.empty?) and geocoded.nil?
           query = 'Portland, OR'
         end
 
-        geocoded = optimistic_geo_wrapper query
-
-        loc = {name: geocoded['formatted_address'],
-               lat: geocoded['geometry']['location']['lat'],
-               lng: geocoded['geometry']['location']['lng']
+        {name: geocoded['formatted_address'],
+         lat: geocoded['geometry']['location']['lat'],
+         lng: geocoded['geometry']['location']['lng']
         }
-
-        # Lita.logger.debug "loc: '#{loc}'"
-
-        loc
       end
 
     end
