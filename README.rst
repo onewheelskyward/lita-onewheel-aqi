@@ -17,16 +17,14 @@ Installation
 ============
 Add lita-onewheel-aqi to your Lita instance's Gemfile:
 
-``` ruby
-gem 'lita-onewheel-aqi'
-```
+``gem 'lita-onewheel-aqi'``
 
 Configuration
 =============
 
 Add your API key to your lita_config.rb:
 
-`config.handlers.onewheel_aqi.api_key`
+``config.handlers.onewheel_aqi.api_key``
 
 It can be procured here: http://airnowapi.org/account/request/
 
