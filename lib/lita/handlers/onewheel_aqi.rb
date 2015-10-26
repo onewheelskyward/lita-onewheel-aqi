@@ -10,7 +10,7 @@ module Lita
       route /^aqi (.*)/i,
             :get_aqi,
             command: true,
-            help: "!aqi [location] gives you available data for air quality (PM2.5) forecast and latest observation."
+            help: '!aqi [location] gives you available data for air quality (PM2.5) forecast and latest observation.'
 
       def get_aqi(response)
         loc = geo_lookup(response.matches[0][0])
@@ -26,11 +26,11 @@ module Lita
         query_string = (parameters.map { |k, v| "#{k}=#{v}" }).join "&"
         forecast_response = RestClient.get('http://airnowapi.org/aq/forecast/latLong/?' + query_string)
         forecasted_aqi = JSON.parse(forecast_response)
-        Lita.logger.debug "Forecast response: " + forecasted_aqi.inspect
+        Lita.logger.debug 'Forecast response: ' + forecasted_aqi.inspect
 
         observed_response = RestClient.get('http://airnowapi.org/aq/observation/latLong/current/?' + query_string)
         observed_aqi = JSON.parse(observed_response)
-        Lita.logger.debug "Observed response: " + observed_aqi.inspect
+        Lita.logger.debug 'Observed response: ' + observed_aqi.inspect
 
         if forecasted_aqi.nil? and observed_aqi.nil?
           response.reply "No AQI data for #{loc[:name]}."
