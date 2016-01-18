@@ -7,13 +7,13 @@ module Lita
       config :api_key
       config :distance
 
-      route /^aqi (.*)/i,
+      route /^aqi(.*)$/i,
             :get_aqi,
             command: true,
-            help: '!aqi [location] gives you available data for air quality (PM2.5) forecast and latest observation.'
+            help: {'!aqi [location]' => 'Gives you available data for air quality (PM2.5) forecast and latest observation.'}
 
       def get_aqi(response)
-        loc = geo_lookup(response.matches[0][0])
+        loc = geo_lookup(response.matches[0][0].to_s.strip)
         puts loc.inspect
 
         parameters = {
@@ -75,6 +75,7 @@ module Lita
       end
 
       def geo_lookup(query)
+        puts query.inspect
         geocoded = optimistic_geo_wrapper query
 
         if (query.nil? or query.empty?) and geocoded.nil?
