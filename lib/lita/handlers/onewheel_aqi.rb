@@ -24,11 +24,17 @@ module Lita
         }
 
         query_string = (parameters.map { |k, v| "#{k}=#{v}" }).join "&"
-        forecast_response = RestClient.get('http://airnowapi.org/aq/forecast/latLong/?' + query_string)
+
+
+        forecast_uri = 'http://airnowapi.org/aq/forecast/latLong/?' + query_string
+        Lita.logger.debug "Observed URI: #{forecast_uri}"
+        forecast_response = RestClient.get(forecast_uri)
         forecasted_aqi = JSON.parse(forecast_response)
         Lita.logger.debug 'Forecast response: ' + forecasted_aqi.inspect
 
-        observed_response = RestClient.get('http://airnowapi.org/aq/observation/latLong/current/?' + query_string)
+        observed_uri = 'http://airnowapi.org/aq/observation/latLong/current/?' + query_string
+        Lita.logger.debug "Observed URI: #{observed_uri}"
+        observed_response = RestClient.get(observed_uri)
         observed_aqi = JSON.parse(observed_response)
         Lita.logger.debug 'Observed response: ' + observed_aqi.inspect
 
