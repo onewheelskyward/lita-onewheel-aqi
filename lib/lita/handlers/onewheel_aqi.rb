@@ -13,7 +13,11 @@ module Lita
             help: {'!aqi [location]' => 'Gives you available data for air quality (PM2.5) forecast and latest observation.'}
 
       def get_aqi(response)
-        loc = geo_lookup(response.matches[0][0].to_s.strip)
+        location = response.matches[0][0].to_s.strip
+        puts "'#{location}'"
+        location = 'Portland, OR' if location.empty?
+
+        loc = geo_lookup(location)
         puts loc.inspect
 
         parameters = {
