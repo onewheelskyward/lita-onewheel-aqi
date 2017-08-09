@@ -10,7 +10,37 @@ module Lita
       route /^aqi(.*)$/i,
             :get_aqi,
             command: true,
-            help: {'!aqi [location]' => 'Gives you available data for air quality (PM2.5) forecast and latest observation.'}
+            help: { '!aqi [location]' => 'Gives you available data for air quality (PM2.5) forecast and latest observation.' }
+
+      # IRC colors.
+      def colors
+        { white:  '00',
+          black:  '01',
+          blue:   '02',
+          green:  '03',
+          red:    '04',
+          brown:  '05',
+          purple: '06',
+          orange: '07',
+          yellow: '08',
+          lime:   '09',
+          teal:   '10',
+          aqua:   '11',
+          royal:  '12',
+          pink:   '13',
+          grey:   '14',
+          silver: '15' }
+      end
+
+      # Based on the temp in F.
+      def aqi_range_colors
+        { 0..50 => :green,
+          51..100 => :yellow,
+          101..150 => :orange,
+          151..200 => :red,
+          201..300 => :purple,
+          301..500 => :pink }
+      end
 
       def get_aqi(response)
         location = response.matches[0][0].to_s.strip
@@ -21,24 +51,26 @@ module Lita
         puts loc.inspect
 
         parameters = {
-            latitude: loc[:lat],
-            longitude: loc[:lng],
-            api_key: config.api_key,
-            format: 'application/json'
+          latitude: loc[:lat],
+          longitude: loc[:lng],
+          api_key: config.api_key,
+          format: 'application/json'
         }
 
-        query_string = (parameters.map { |k, v| "#{k}=#{v}" }).join "&"
+        query_string = (parameters.map { |k, v| "#{k}=#{v}" }).join '&'
         uri = 'http://airnowapi.org/aq/forecast/latLong/?' + query_string
         Lita.logger.debug "Getting aqi from #{uri}"
-        forecast_response = RestClient.get(uri)
-        forecasted_aqi = JSON.parse(forecast_response)
-        Lita.logger.debug 'Forecast response: ' + forecasted_aqi.inspect
+        # forecast_response = RestClient.get(uri)
+        # forecasted_aqi = JSON.parse(forecast_response)
+        # Lita.logger.debug 'Forecast response: ' + forecasted_aqi.inspect
 
-        observed_response = RestClient.get('http://airnowapi.org/aq/observation/latLong/current/?' + query_string)
+        uri = 'http://airnowapi.org/aq/observation/latLong/current/?' + query_string
+        Lita.logger.debug "Getting aqi observed from #{uri}"
+        observed_response = RestClient.get(uri)
         observed_aqi = JSON.parse(observed_response)
         Lita.logger.debug 'Observed response: ' + observed_aqi.inspect
 
-        if forecasted_aqi.nil? and observed_aqi.nil?
+        if observed_aqi.nil? # forecasted_aqi.nil? and
           response.reply "No AQI data for #{loc[:name]}."
           Lita.logger.info "No data found for #{response.matches[0][0]}"
           return
@@ -46,25 +78,33 @@ module Lita
 
         # [{"DateObserved":"2015-08-23 ","HourObserved":14,"LocalTimeZone":"PST","ReportingArea":"Portland","StateCode":"OR","Latitude":45.538,"Longitude":-122.656,"ParameterName":"O3","AQI":49,"Category":{"Number":1,"Name":"Good"}},{"DateObserved":"2015-08-23 ","HourObserved":14,"LocalTimeZone":"PST","ReportingArea":"Portland","StateCode":"OR","Latitude":45.538,"Longitude":-122.656,"ParameterName":"PM2.5","AQI":167,"Category":{"Number":4,"Name":"Unhealthy"}}]
         # todo: extract today's forecast, not tomorrow's.
-        forecasted_aqi = extract_pmtwofive(forecasted_aqi)
+        # forecasted_aqi = extract_pmtwofive(forecasted_aqi)
         observed_aqi = extract_pmtwofive(observed_aqi)
 
         reply = "AQI for #{loc[:name]}, "
-        unless forecasted_aqi == []
-          reply += "Forecasted: #{(forecasted_aqi['ActionDay'] == 'true')? 'Action Day! ' : ''}#{forecasted_aqi['AQI']} #{forecasted_aqi['Category']['Name']}  "
-        end
+        # unless forecasted_aqi == []
+        #   reply += "Forecasted: #{(forecasted_aqi['ActionDay'] == 'true')? 'Action Day! ' : ''}#{forecasted_aqi['AQI']} #{forecasted_aqi['Category']['Name']}  "
+        # end
         unless observed_aqi == []
-          reply += "Observed: #{observed_aqi['AQI']} #{observed_aqi['Category']['Name']} at #{observed_aqi['DateObserved']}#{observed_aqi['HourObserved']}00 hours."
+          reply += "Observed: #{color_str(observed_aqi['AQI'])} #{observed_aqi['Category']['Name']} at #{observed_aqi['DateObserved']}#{observed_aqi['HourObserved']}00 hours."
         end
         response.reply reply
+      end
+
+      def color_str(str)
+        aqi_range_colors.keys.each do |color_key|
+          if color_key.cover? str.to_i    # Super secred cover sauce
+            color = colors[color_key]
+            str = "\x03#{color}#{str}\x03"
+          end
+        end
+        str
       end
 
       def extract_pmtwofive(aqi)
         returned_aqi = aqi
         aqi.each do |a|
-          if a['ParameterName'] == 'PM2.5'
-            returned_aqi = a
-          end
+          returned_aqi = a if a['ParameterName'] == 'PM2.5'
         end
         returned_aqi
       end
@@ -74,26 +114,21 @@ module Lita
       def optimistic_geo_wrapper(query)
         geocoded = nil
         result = ::Geocoder.search(query)
-        if result[0]
-          geocoded = result[0].data
-        end
+        puts result.inspect
+        geocoded = result[0].data if result[0]
         geocoded
       end
 
       def geo_lookup(query)
-        puts query.inspect
+        puts "Location lookup #{query.inspect}"
         geocoded = optimistic_geo_wrapper query
 
-        if (query.nil? or query.empty?) and geocoded.nil?
-          query = 'Portland, OR'
-        end
+        query = 'Portland, OR' if (query.nil? || query.empty?) && geocoded.nil?
 
-        {name: geocoded['formatted_address'],
-         lat: geocoded['geometry']['location']['lat'],
-         lng: geocoded['geometry']['location']['lng']
-        }
+        { name: geocoded['formatted_address'],
+          lat: geocoded['geometry']['location']['lat'],
+          lng: geocoded['geometry']['location']['lng'] }
       end
-
     end
 
     Lita.register_handler(OnewheelAqi)
