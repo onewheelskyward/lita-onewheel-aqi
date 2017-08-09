@@ -94,7 +94,7 @@ module Lita
       def color_str(str)
         aqi_range_colors.keys.each do |color_key|
           if color_key.cover? str.to_i    # Super secred cover sauce
-            color = colors[color_key]
+            color = colors[aqi_range_colors[color_key]]
             str = "\x03#{color}#{str}\x03"
           end
         end
