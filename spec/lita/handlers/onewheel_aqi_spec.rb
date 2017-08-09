@@ -29,6 +29,6 @@ describe Lita::Handlers::OnewheelAqi, lita_handler: true do
 
   it 'queries the aqi' do
     send_command 'aqi'
-    expect(replies.last).to include("AQI for Portland, OR, USA, Observed: \u0003118\u0003 Unhealthy for Sensitive Groups at 2017-08-09 1100 hours.")
+    expect(replies.last).to include("AQI for Portland, OR, USA, Observed: \u000307118\u0003 Unhealthy for Sensitive Groups at 2017-08-09 1100 hours.")
   end
 end
