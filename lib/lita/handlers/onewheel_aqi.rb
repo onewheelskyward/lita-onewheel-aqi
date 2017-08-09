@@ -24,7 +24,9 @@ module Lita
         }
 
         query_string = (parameters.map { |k, v| "#{k}=#{v}" }).join "&"
-        forecast_response = RestClient.get('http://airnowapi.org/aq/forecast/latLong/?' + query_string)
+        uri = 'http://airnowapi.org/aq/forecast/latLong/?' + query_string
+        Lita.logger.debug "Getting aqi from #{uri}"
+        forecast_response = RestClient.get(uri)
         forecasted_aqi = JSON.parse(forecast_response)
         Lita.logger.debug 'Forecast response: ' + forecasted_aqi.inspect
 
