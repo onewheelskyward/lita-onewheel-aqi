@@ -68,7 +68,7 @@ module Lita
         #   reply += "Forecasted: #{(forecasted_aqi['ActionDay'] == 'true')? 'Action Day! ' : ''}#{forecasted_aqi['AQI']} #{forecasted_aqi['Category']['Name']}  "
         # end
         unless observed_aqi == []
-          reply += "Observed: #{color_str(observed_aqi)}"
+          reply += "Observed: #{color_str(observed_aqi)}  \x03#{colors[:grey]}(aqicn.org)\x03"
         end
         response.reply reply
       end
