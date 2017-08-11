@@ -1,10 +1,10 @@
 Gem::Specification.new do |spec|
   spec.name          = 'lita-onewheel-aqi'
-  spec.version       = '0.2.2'
+  spec.version       = '1.0.0'
   spec.authors       = ['Andrew Kreps']
   spec.email         = ['andrew.kreps@gmail.com']
   spec.description   = 'AQI data retrieval bot'
-  spec.summary       = 'Reads the current AQI from aqinowapi.org and displays it.'
+  spec.summary       = 'Reads the current AQI from aqicn.org and displays it.'
   spec.homepage      = 'https://github.com/onewheelskyward/lita-onewheel-aqi'
   spec.license       = 'MIT'
   spec.metadata      = { 'lita_plugin_type' => 'handler'}

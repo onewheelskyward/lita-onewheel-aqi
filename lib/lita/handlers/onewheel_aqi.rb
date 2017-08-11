@@ -50,35 +50,17 @@ module Lita
         loc = geo_lookup(location)
         puts loc.inspect
 
-        parameters = {
-          latitude: loc[:lat],
-          longitude: loc[:lng],
-          api_key: config.api_key,
-          format: 'application/json'
-        }
-
-        query_string = (parameters.map { |k, v| "#{k}=#{v}" }).join '&'
-        uri = 'http://airnowapi.org/aq/forecast/latLong/?' + query_string
+        api_key = 'd4d71949d26fcaa48783808fdba32fbdc8d367eb'
+        uri = "http://api.waqi.info/feed/geo:#{loc[:lat]};#{loc[:lng]}/?token=#{api_key}"
         Lita.logger.debug "Getting aqi from #{uri}"
         # forecast_response = RestClient.get(uri)
         # forecasted_aqi = JSON.parse(forecast_response)
         # Lita.logger.debug 'Forecast response: ' + forecasted_aqi.inspect
 
-        uri = 'http://airnowapi.org/aq/observation/latLong/current/?' + query_string
-        Lita.logger.debug "Getting aqi observed from #{uri}"
         observed_response = RestClient.get(uri)
         observed_aqi = JSON.parse(observed_response)
         Lita.logger.debug 'Observed response: ' + observed_aqi.inspect
 
-        if observed_aqi.nil? # forecasted_aqi.nil? and
-          response.reply "No AQI data for #{loc[:name]}."
-          Lita.logger.info "No data found for #{response.matches[0][0]}"
-          return
-        end
-
-        # [{"DateObserved":"2015-08-23 ","HourObserved":14,"LocalTimeZone":"PST","ReportingArea":"Portland","StateCode":"OR","Latitude":45.538,"Longitude":-122.656,"ParameterName":"O3","AQI":49,"Category":{"Number":1,"Name":"Good"}},{"DateObserved":"2015-08-23 ","HourObserved":14,"LocalTimeZone":"PST","ReportingArea":"Portland","StateCode":"OR","Latitude":45.538,"Longitude":-122.656,"ParameterName":"PM2.5","AQI":167,"Category":{"Number":4,"Name":"Unhealthy"}}]
-        # todo: extract today's forecast, not tomorrow's.
-        # forecasted_aqi = extract_pmtwofive(forecasted_aqi)
         observed_aqi = extract_pmtwofive(observed_aqi)
 
         reply = "AQI for #{loc[:name]}, "
@@ -86,7 +68,7 @@ module Lita
         #   reply += "Forecasted: #{(forecasted_aqi['ActionDay'] == 'true')? 'Action Day! ' : ''}#{forecasted_aqi['AQI']} #{forecasted_aqi['Category']['Name']}  "
         # end
         unless observed_aqi == []
-          reply += "Observed: #{color_str(observed_aqi['AQI'])} #{observed_aqi['Category']['Name']} at #{observed_aqi['DateObserved']}#{observed_aqi['HourObserved']}00 hours."
+          reply += "Observed: #{color_str(observed_aqi)}"
         end
         response.reply reply
       end
@@ -102,11 +84,7 @@ module Lita
       end
 
       def extract_pmtwofive(aqi)
-        returned_aqi = aqi
-        aqi.each do |a|
-          returned_aqi = a if a['ParameterName'] == 'PM2.5'
-        end
-        returned_aqi
+        aqi['data']['iaqi']['pm25']['v']
       end
 
       # Geographical stuffs
