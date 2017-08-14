@@ -6,6 +6,7 @@ module Lita
     class OnewheelAqi < Handler
       config :api_key
       config :distance
+      config :colors, default: true
 
       route /^aqi(.*)$/i,
             :get_aqi,
@@ -67,19 +68,29 @@ module Lita
         # unless forecasted_aqi == []
         #   reply += "Forecasted: #{(forecasted_aqi['ActionDay'] == 'true')? 'Action Day! ' : ''}#{forecasted_aqi['AQI']} #{forecasted_aqi['Category']['Name']}  "
         # end
+
+        banner_str = "(aqicn.org)"
+        if config.colors
+          banner_str = "\x03#{colors[:grey]}#{banner_str}\x03"
+        end
+
         unless observed_aqi == []
-          reply += "Observed: #{color_str(observed_aqi)}  \x03#{colors[:grey]}(aqicn.org)\x03"
+          reply += "Observed: #{color_str(observed_aqi)}  #{banner_str}"
         end
         response.reply reply
       end
 
       def color_str(str)
-        aqi_range_colors.keys.each do |color_key|
-          if color_key.cover? str.to_i    # Super secred cover sauce
-            color = colors[aqi_range_colors[color_key]]
-            str = "\x03#{color}#{str}\x03"
+
+        if config.colors
+          aqi_range_colors.keys.each do |color_key|
+            if color_key.cover? str.to_i    # Super secred cover sauce
+              color = colors[aqi_range_colors[color_key]]
+              str = "\x03#{color}#{str}\x03"
+            end
           end
         end
+
         str
       end
 
