@@ -15,10 +15,14 @@ module Lita
       route /^aqi$/i,
             :get_aqi,
             command: true
-      route /^aqi(deets|details)\s*(.*)$/i,
-            :get_aqi_deets,
-            command: true,
-            help: { '!aqideets [location]' => 'Gives you moar datas.' }
+      # route /^aqideets\s*(.*)$/i,
+      #       :get_aqi_deets,
+      #       command: true,
+      #       help: { '!aqideets [location]' => 'Gives you moar datas.' }
+      # route /^aqidetails\s*(.*)$/i,
+      #       :get_aqi_deets,
+      #       command: true,
+      #       help: { '!aqideets [location]' => 'Gives you moar datas.' }
 
       # IRC colors.
       def colors
@@ -51,9 +55,14 @@ module Lita
       end
 
       def get_location(response)
-        location = response.matches[0][0].to_s.strip
+        if response.matches[0].downcase == 'aqi'
+          location = ''
+        else
+          location = response.matches[0][0]
+        end
+
         puts "get_location: '#{location}'"
-        location = 'Portland, OR' if location.empty?
+        location = 'Portland, OR' if location.nil? or location.empty?
 
         loc = geo_lookup(location)
         puts loc.inspect
