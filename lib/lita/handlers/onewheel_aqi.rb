@@ -102,6 +102,7 @@ module Lita
         reply = "AQI for #{loc[:name]}, "
 
         banner_str = "(#{aqi['data']['city']['url']})"
+        banner_str = "\x03#{colors[:grey]}#{banner_str}\x03" if config.colors
 
         if aqi['data']['iaqi']['co']
           reply += 'co: ' + aqi['data']['iaqi']['co']['v'].to_s + '  '
@@ -122,6 +123,7 @@ module Lita
           reply += 'temp: ' + aqi['data']['iaqi']['t']['v'].to_s + 'C  '
         end
 
+        reply += banner_str
         response.reply reply
       end
 
