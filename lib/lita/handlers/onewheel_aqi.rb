@@ -55,14 +55,14 @@ module Lita
       end
 
       def get_location(response)
-        if response.matches[0].to_s.downcase == 'aqi'
-          location = ''
-        else
-          location = response.matches[0][0]
-        end
+        location = if response.matches[0].to_s.casecmp('aqi').zero?
+                     ''
+                   else
+                     response.matches[0][0]
+                   end
 
         puts "get_location: '#{location}'"
-        location = 'Portland, OR' if location.nil? or location.empty?
+        location = 'Portland, OR' if location.nil? || location.empty?
 
         loc = geo_lookup(location)
         puts loc.inspect
@@ -87,9 +87,7 @@ module Lita
         reply = "AQI for #{loc[:name]}, "
 
         banner_str = "(#{observed_aqi['data']['city']['url']})"
-        if config.colors
-          banner_str = "\x03#{colors[:grey]}#{banner_str}\x03"
-        end
+        banner_str = "\x03#{colors[:grey]}#{banner_str}\x03" if config.colors
 
         unless observed_aqi == []
           reply += "Observed PM25: #{color_str(observed_pm25)}  #{banner_str}"
@@ -99,23 +97,38 @@ module Lita
 
       def get_aqi_deets(response)
         loc = get_location(response)
-        observed_aqi = get_observed_aqi(loc)
+        aqi = get_observed_aqi(loc)
 
         reply = "AQI for #{loc[:name]}, "
 
-        banner_str = "(#{observed_aqi['data']['city']['url']})"
+        banner_str = "(#{aqi['data']['city']['url']})"
 
-        # unless observed_aqi == []
-        #   reply += "Observed PM25: #{color_str('s')}  #{banner_str}"
-        # end
+        if aqi['data']['iaqi']['co']
+          reply += 'co: ' + aqi['data']['iaqi']['co']['v'].to_s + '  '
+        end
+        if aqi['data']['iaqi']['h']
+          reply += 'h: ' + aqi['data']['iaqi']['h']['v'].to_s + '  '
+        end
+        if aqi['data']['iaqi']['p']
+          reply += 'h: ' + aqi['data']['iaqi']['p']['v'].to_s + '  '
+        end
+        if aqi['data']['iaqi']['pm10']
+          reply += 'h: ' + aqi['data']['iaqi']['pm10']['v'].to_s + '  '
+        end
+        if aqi['data']['iaqi']['pm25']
+          reply += 'h: ' + aqi['data']['iaqi']['pm25']['v'].to_s + '  '
+        end
+        if aqi['data']['iaqi']['t']
+          reply += 'h: ' + aqi['data']['iaqi']['t']['v'].to_s + '  '
+        end
+
         response.reply reply
       end
 
       def color_str(str)
-
         if config.colors
           aqi_range_colors.keys.each do |color_key|
-            if color_key.cover? str.to_i    # Super secred cover sauce
+            if color_key.cover? str.to_i # Super secred cover sauce
               color = colors[aqi_range_colors[color_key]]
               str = "\x03#{color}#{str}\x03"
             end
@@ -128,11 +141,11 @@ module Lita
       def extract_pmtwofive(aqi)
         Lita.logger.debug "extract_pmtwofive with #{aqi}"
         pm25 = ''
-        if aqi['data']['iaqi']['pm25']
-          pm25 = aqi['data']['iaqi']['pm25']['v']
-        else
-          pm25 = "No PM2.5 data for #{aqi['data']['city']['name']}"
-        end
+        pm25 = if aqi['data']['iaqi']['pm25']
+                 aqi['data']['iaqi']['pm25']['v']
+               else
+                 "No PM2.5 data for #{aqi['data']['city']['name']}"
+               end
         pm25
       end
 
