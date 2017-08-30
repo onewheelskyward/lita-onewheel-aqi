@@ -15,14 +15,14 @@ module Lita
       route /^aqi$/i,
             :get_aqi,
             command: true
-      # route /^aqideets\s*(.*)$/i,
-      #       :get_aqi_deets,
-      #       command: true,
-      #       help: { '!aqideets [location]' => 'Gives you moar datas.' }
-      # route /^aqidetails\s*(.*)$/i,
-      #       :get_aqi_deets,
-      #       command: true,
-      #       help: { '!aqideets [location]' => 'Gives you moar datas.' }
+      route /^aqideets\s*(.*)$/i,
+            :get_aqi_deets,
+            command: true,
+            help: { '!aqideets [location]' => 'Gives you moar datas.' }
+      route /^aqidetails\s*(.*)$/i,
+            :get_aqi_deets,
+            command: true,
+            help: { '!aqideets [location]' => 'Gives you moar datas.' }
 
       # IRC colors.
       def colors
@@ -55,7 +55,7 @@ module Lita
       end
 
       def get_location(response)
-        if response.matches[0].downcase == 'aqi'
+        if response.matches[0].to_s.downcase == 'aqi'
           location = ''
         else
           location = response.matches[0][0]
@@ -85,9 +85,6 @@ module Lita
         observed_pm25 = extract_pmtwofive(observed_aqi)
 
         reply = "AQI for #{loc[:name]}, "
-        # unless forecasted_aqi == []
-        #   reply += "Forecasted: #{(forecasted_aqi['ActionDay'] == 'true')? 'Action Day! ' : ''}#{forecasted_aqi['AQI']} #{forecasted_aqi['Category']['Name']}  "
-        # end
 
         banner_str = "(#{observed_aqi['data']['city']['url']})"
         if config.colors
@@ -97,6 +94,20 @@ module Lita
         unless observed_aqi == []
           reply += "Observed PM25: #{color_str(observed_pm25)}  #{banner_str}"
         end
+        response.reply reply
+      end
+
+      def get_aqi_deets(response)
+        loc = get_location(response)
+        observed_aqi = get_observed_aqi(loc)
+
+        reply = "AQI for #{loc[:name]}, "
+
+        banner_str = "(#{observed_aqi['data']['city']['url']})"
+
+        # unless observed_aqi == []
+        #   reply += "Observed PM25: #{color_str('s')}  #{banner_str}"
+        # end
         response.reply reply
       end
 

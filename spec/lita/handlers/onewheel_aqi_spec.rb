@@ -2,8 +2,8 @@ require 'spec_helper'
 
 describe Lita::Handlers::OnewheelAqi, lita_handler: true do
   it { is_expected.to route_command('aqi') }
-  # it { is_expected.to route_command('aqidetails') }
-  # it { is_expected.to route_command('aqideets') }
+  it { is_expected.to route_command('aqidetails') }
+  it { is_expected.to route_command('aqideets') }
 
   before do
     mock = File.open('spec/fixtures/Output.json').read
@@ -32,5 +32,10 @@ describe Lita::Handlers::OnewheelAqi, lita_handler: true do
   it 'queries the aqi' do
     send_command 'aqi'
     expect(replies.last).to include("AQI for Portland, OR, USA, Observed PM25: \u00030876\u0003  \u000314(http://aqicn.org/city/usa/oregon/government-camp-multorpor-visibility/)\u0003")
+  end
+
+  it 'queries the aqideets' do
+    send_command 'aqideets'
+    expect(replies.last).to include("")
   end
 end
