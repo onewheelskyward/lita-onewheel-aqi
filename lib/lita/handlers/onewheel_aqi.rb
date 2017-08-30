@@ -62,20 +62,20 @@ module Lita
         observed_aqi = JSON.parse(observed_response)
         Lita.logger.debug 'Observed response: ' + observed_aqi.inspect
 
-        observed_aqi = extract_pmtwofive(observed_aqi)
+        observed_pm25 = extract_pmtwofive(observed_aqi)
 
         reply = "AQI for #{loc[:name]}, "
         # unless forecasted_aqi == []
         #   reply += "Forecasted: #{(forecasted_aqi['ActionDay'] == 'true')? 'Action Day! ' : ''}#{forecasted_aqi['AQI']} #{forecasted_aqi['Category']['Name']}  "
         # end
 
-        banner_str = "(aqicn.org)"
+        banner_str = "(#{observed_aqi['data']['city']['url']})"
         if config.colors
           banner_str = "\x03#{colors[:grey]}#{banner_str}\x03"
         end
 
         unless observed_aqi == []
-          reply += "Observed: #{color_str(observed_aqi)}  #{banner_str}"
+          reply += "Observed PM25: #{color_str(observed_pm25)}  #{banner_str}"
         end
         response.reply reply
       end
