@@ -106,6 +106,7 @@ module Lita
       end
 
       def extract_pmtwofive(aqi)
+        Lita.logger.debug "extract_pmtwofive with #{aqi}"
         aqi['data']['iaqi']['pm25']['v']
       end
 
