@@ -81,17 +81,22 @@ module Lita
 
       def get_aqi(response)
         loc = get_location(response)
-        observed_aqi = get_observed_aqi(loc)
-        observed_pm25 = extract_pmtwofive(observed_aqi)
+        aqi = get_observed_aqi(loc)
 
         reply = "AQI for #{loc[:name]}, "
 
-        banner_str = "(#{observed_aqi['data']['city']['url']})"
+        if aqi['data']['iaqi']['pm10']
+          reply += 'pm10: ' + color_str(aqi['data']['iaqi']['pm10']['v'].to_s) + '  '
+        end
+        if aqi['data']['iaqi']['pm25']
+          reply += 'pm25: ' + color_str(aqi['data']['iaqi']['pm25']['v'].to_s) + '  '
+        end
+
+        banner_str = "(#{aqi['data']['city']['url']})"
         banner_str = "\x03#{colors[:grey]}#{banner_str}\x03" if config.colors
 
-        unless observed_aqi == []
-          reply += "Observed PM25: #{color_str(observed_pm25)}  #{banner_str}"
-        end
+        reply += banner_str
+
         response.reply reply
       end
 
