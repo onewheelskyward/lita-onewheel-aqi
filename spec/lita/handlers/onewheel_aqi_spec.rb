@@ -2,6 +2,8 @@ require 'spec_helper'
 
 describe Lita::Handlers::OnewheelAqi, lita_handler: true do
   it { is_expected.to route_command('aqi') }
+  it { is_expected.to route_command('aqidetails') }
+  it { is_expected.to route_command('aqideets') }
 
   before do
     mock = File.open('spec/fixtures/Output.json').read

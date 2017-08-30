@@ -8,10 +8,17 @@ module Lita
       config :distance
       config :colors, default: true
 
-      route /^aqi(.*)$/i,
+      route /^aqi\s+(.*)$/i,
             :get_aqi,
             command: true,
             help: { '!aqi [location]' => 'Gives you available data for air quality (PM2.5) forecast and latest observation.' }
+      route /^aqi$/i,
+            :get_aqi,
+            command: true
+      route /^aqi(deets|details)\s*(.*)$/i,
+            :get_aqi_deets,
+            command: true,
+            help: { '!aqideets [location]' => 'Gives you moar datas.' }
 
       # IRC colors.
       def colors
@@ -43,25 +50,29 @@ module Lita
           301..500 => :pink }
       end
 
-      def get_aqi(response)
+      def get_location(response)
         location = response.matches[0][0].to_s.strip
         puts "'#{location}'"
         location = 'Portland, OR' if location.empty?
 
         loc = geo_lookup(location)
         puts loc.inspect
+        loc
+      end
 
-        api_key = 'd4d71949d26fcaa48783808fdba32fbdc8d367eb'
-        uri = "http://api.waqi.info/feed/geo:#{loc[:lat]};#{loc[:lng]}/?token=#{api_key}"
+      def get_observed_aqi(loc)
+        uri = "http://api.waqi.info/feed/geo:#{loc[:lat]};#{loc[:lng]}/?token=#{config.api_key}"
         Lita.logger.debug "Getting aqi from #{uri}"
-        # forecast_response = RestClient.get(uri)
-        # forecasted_aqi = JSON.parse(forecast_response)
-        # Lita.logger.debug 'Forecast response: ' + forecasted_aqi.inspect
 
         observed_response = RestClient.get(uri)
         observed_aqi = JSON.parse(observed_response)
         Lita.logger.debug 'Observed response: ' + observed_aqi.inspect
+        observed_aqi
+      end
 
+      def get_aqi(response)
+        loc = get_location(response)
+        observed_aqi = get_observed_aqi(loc)
         observed_pm25 = extract_pmtwofive(observed_aqi)
 
         reply = "AQI for #{loc[:name]}, "
