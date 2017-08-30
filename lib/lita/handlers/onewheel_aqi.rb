@@ -110,16 +110,16 @@ module Lita
           reply += 'h: ' + aqi['data']['iaqi']['h']['v'].to_s + '  '
         end
         if aqi['data']['iaqi']['p']
-          reply += 'h: ' + aqi['data']['iaqi']['p']['v'].to_s + '  '
+          reply += 'p: ' + aqi['data']['iaqi']['p']['v'].to_s + '  '
         end
         if aqi['data']['iaqi']['pm10']
-          reply += 'h: ' + aqi['data']['iaqi']['pm10']['v'].to_s + '  '
+          reply += 'pm10: ' + aqi['data']['iaqi']['pm10']['v'].to_s + '  '
         end
         if aqi['data']['iaqi']['pm25']
-          reply += 'h: ' + aqi['data']['iaqi']['pm25']['v'].to_s + '  '
+          reply += 'pm25: ' + aqi['data']['iaqi']['pm25']['v'].to_s + '  '
         end
         if aqi['data']['iaqi']['t']
-          reply += 'h: ' + aqi['data']['iaqi']['t']['v'].to_s + '  '
+          reply += 't: ' + aqi['data']['iaqi']['t']['v'].to_s + '  '
         end
 
         response.reply reply
