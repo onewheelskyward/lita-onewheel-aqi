@@ -116,7 +116,7 @@ module Lita
           reply += 'pm10: ' + aqi['data']['iaqi']['pm10']['v'].to_s + '  '
         end
         if aqi['data']['iaqi']['pm25']
-          reply += 'pm25: ' + aqi['data']['iaqi']['pm25']['v'].to_s + '  '
+          reply += 'pm25: ' + color_str(aqi['data']['iaqi']['pm25']['v'].to_s) + '  '
         end
         if aqi['data']['iaqi']['t']
           reply += 'temp: ' + aqi['data']['iaqi']['t']['v'].to_s + 'C  '
