@@ -1,8 +1,10 @@
 lita-onewheel-aqi
 =================
 
-.. image:: https://coveralls.io/repos/onewheelskyward/lita-onewheel-aqi/badge.svg?branch=master&service=github :target: https://coveralls.io/github/onewheelskyward/lita-onewheel-aqi?branch=master
-.. image:: https://travis-ci.org/onewheelskyward/lita-onewheel-aqi.svg?branch=master :target: https://travis-ci.org/onewheelskyward/lita-onewheel-aqi
+.. image:: https://coveralls.io/repos/github/onewheelskyward/lita-onewheel-aqi/badge.svg
+:target: https://coveralls.io/github/onewheelskyward/lita-onewheel-aqi
+.. image:: https://travis-ci.org/onewheelskyward/lita-onewheel-aqi.svg?branch=master
+:target: https://travis-ci.org/onewheelskyward/lita-onewheel-aqi
 
 I built this on a plane on day where wildfire smoke had caused Portland, OR's air quality to be worse than Hong Kong's.
 The next year, I upgraded it to use a newer, better API.
