@@ -36,6 +36,6 @@ describe Lita::Handlers::OnewheelAqi, lita_handler: true do
 
   it 'queries the aqideets' do
     send_command 'aqideets'
-    expect(replies.last).to eq("AQI for Portland, OR, USA, h: 11  p: 1014  pm10: 40  pm25: 76  t: 34.65  ")
+    expect(replies.last).to eq('AQI for Portland, OR, USA, humidity: 11%  pressure: 1014mb  pm10: 40  pm25: 76  temp: 34.65C  ')
   end
 end

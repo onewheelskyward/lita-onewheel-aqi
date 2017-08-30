@@ -107,10 +107,10 @@ module Lita
           reply += 'co: ' + aqi['data']['iaqi']['co']['v'].to_s + '  '
         end
         if aqi['data']['iaqi']['h']
-          reply += 'h: ' + aqi['data']['iaqi']['h']['v'].to_s + '  '
+          reply += 'humidity: ' + aqi['data']['iaqi']['h']['v'].to_s + '%  '
         end
         if aqi['data']['iaqi']['p']
-          reply += 'p: ' + aqi['data']['iaqi']['p']['v'].to_s + '  '
+          reply += 'pressure: ' + aqi['data']['iaqi']['p']['v'].to_s + 'mb  '
         end
         if aqi['data']['iaqi']['pm10']
           reply += 'pm10: ' + aqi['data']['iaqi']['pm10']['v'].to_s + '  '
@@ -119,7 +119,7 @@ module Lita
           reply += 'pm25: ' + aqi['data']['iaqi']['pm25']['v'].to_s + '  '
         end
         if aqi['data']['iaqi']['t']
-          reply += 't: ' + aqi['data']['iaqi']['t']['v'].to_s + '  '
+          reply += 'temp: ' + aqi['data']['iaqi']['t']['v'].to_s + 'C  '
         end
 
         response.reply reply
