@@ -107,7 +107,13 @@ module Lita
 
       def extract_pmtwofive(aqi)
         Lita.logger.debug "extract_pmtwofive with #{aqi}"
-        aqi['data']['iaqi']['pm25']['v']
+        pm25 = ''
+        if aqi['data']['iaqi']['pm25']
+          pm25 = aqi['data']['iaqi']['pm25']['v']
+        else
+          pm25 = "No PM2.5 data for #{aqi['data']['city']['name']}"
+        end
+        pm25
       end
 
       # Geographical stuffs
