@@ -52,7 +52,7 @@ module Lita
 
       def get_location(response)
         location = response.matches[0][0].to_s.strip
-        puts "'#{location}'"
+        puts "get_location: '#{location}'"
         location = 'Portland, OR' if location.empty?
 
         loc = geo_lookup(location)
