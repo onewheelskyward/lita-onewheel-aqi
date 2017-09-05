@@ -187,7 +187,7 @@ module Lita
             if config.mode == :irc
               str = "\x03#{color}#{range_str[color_key]}\x03 "
             elsif config.mode == :slack
-              str = "#{range_str[color_key]} "
+              str = "#{aqi_slack_emoji[color_key]} #{range_str[color_key]} #{aqi_slack_emoji[color_key]}  "
             end
           end
         end
