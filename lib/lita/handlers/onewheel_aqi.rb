@@ -105,6 +105,7 @@ module Lita
 
         reply = "AQI for #{loc[:name]}, "
 
+        Lita.logger.debug "Config mode: #{config.mode.inspect}"
         if config.mode == :irc
           reply += color_str_with_value(range_str: aqi_range_labels, range_value: aqi['data']['iaqi']['pm25']['v'].to_s)
           banner_str = "\x03#{colors[:grey]}#{banner_str}\x03"
