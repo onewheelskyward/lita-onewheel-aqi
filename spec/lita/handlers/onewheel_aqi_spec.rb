@@ -31,11 +31,11 @@ describe Lita::Handlers::OnewheelAqi, lita_handler: true do
 
   it 'queries the aqi' do
     send_command 'aqi'
-    expect(replies.last).to include("AQI for Portland, OR, USA, pm10: \u00030340\u0003  pm25: \u00030876\u0003  \u000314(http://aqicn.org/city/usa/oregon/government-camp-multorpor-visibility/)\u0003")
+    expect(replies.last).to include("AQI for Portland, OR, USA, \u000308Moderate\u0003 pm10: \u00030340\u0003  pm25: \u00030876\u0003  \u000314(http://aqicn.org/city/usa/oregon/government-camp-multorpor-visibility/)\u0003")
   end
 
   it 'queries the aqideets' do
     send_command 'aqideets'
-    expect(replies.last).to eq("AQI for Portland, OR, USA, humidity: 11%  pressure: 1014mb  pm10: \u00030340\u0003  pm25: \u00030876\u0003  temp: 34.65C  \u000314(http://aqicn.org/city/usa/oregon/government-camp-multorpor-visibility/)\u0003")
+    expect(replies.last).to eq("AQI for Portland, OR, USA, \u00030Moderate\u0003 humidity: 11%  pressure: 1014mb  pm10: \u00030340\u0003  pm25: \u00030876\u0003  temp: 34.65C  \u000314(http://aqicn.org/city/usa/oregon/government-camp-multorpor-visibility/)\u0003")
   end
 end

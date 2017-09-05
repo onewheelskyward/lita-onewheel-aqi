@@ -6,7 +6,7 @@ module Lita
     class OnewheelAqi < Handler
       config :api_key
       config :distance
-      config :colors, default: true
+      config :mode, default: :irc
 
       route /^aqi\s+(.*)$/i,
             :get_aqi,
@@ -54,6 +54,24 @@ module Lita
           301..500 => :pink }
       end
 
+      def aqi_range_labels
+        { 0..50 => 'Good',
+          51..100 => 'Moderate',
+          101..150 => 'Unhealthy for Sensitive Groups',
+          151..200 => 'Unhealthy for All',
+          201..300 => 'Very Unhealthy',
+          301..500 => 'Hazardous' }
+      end
+
+      def aqi_slack_emoji
+        { 0..50 => ':deciduous_tree:',
+          51..100 => ':warning:',
+          101..150 => ':large_orange_diamond:',
+          151..200 => ':no_entry_sign:',
+          201..300 => ':radioactive_sign:',
+          301..500 => ':no_entry_sign: :radioactive_sign: :no_entry_sign:' }
+      end
+
       def get_location(response)
         location = if response.matches[0].to_s.casecmp('aqi').zero?
                      ''
@@ -83,7 +101,15 @@ module Lita
         loc = get_location(response)
         aqi = get_observed_aqi(loc)
 
+        banner_str = "(#{aqi['data']['city']['url']})"
+
         reply = "AQI for #{loc[:name]}, "
+
+        if config.mode == :irc
+          reply += color_str_with_value(range_str: aqi_range_labels, range_value: aqi['data']['iaqi']['pm25']['v'].to_s)
+          banner_str = "\x03#{colors[:grey]}#{banner_str}\x03"
+        end
+
 
         if aqi['data']['iaqi']['pm10']
           reply += 'pm10: ' + color_str(aqi['data']['iaqi']['pm10']['v'].to_s) + '  '
@@ -91,9 +117,6 @@ module Lita
         if aqi['data']['iaqi']['pm25']
           reply += 'pm25: ' + color_str(aqi['data']['iaqi']['pm25']['v'].to_s) + '  '
         end
-
-        banner_str = "(#{aqi['data']['city']['url']})"
-        banner_str = "\x03#{colors[:grey]}#{banner_str}\x03" if config.colors
 
         reply += banner_str
 
@@ -107,7 +130,10 @@ module Lita
         reply = "AQI for #{loc[:name]}, "
 
         banner_str = "(#{aqi['data']['city']['url']})"
-        banner_str = "\x03#{colors[:grey]}#{banner_str}\x03" if config.colors
+
+        if config.mode == :irc
+          banner_str = "\x03#{colors[:grey]}#{banner_str}\x03"
+        end
 
         if aqi['data']['iaqi']['co']
           reply += 'co: ' + aqi['data']['iaqi']['co']['v'].to_s + '  '
@@ -132,12 +158,32 @@ module Lita
         response.reply reply
       end
 
-      def color_str(str)
-        if config.colors
+      def color_str(str, value = nil)
+        if config.mode == :irc
+          if value.nil?
+            value = str.to_i
+          end
+
           aqi_range_colors.keys.each do |color_key|
-            if color_key.cover? str.to_i # Super secred cover sauce
+            if color_key.cover? value # Super secred cover sauce
               color = colors[aqi_range_colors[color_key]]
               str = "\x03#{color}#{str}\x03"
+            end
+          end
+        end
+
+        str
+      end
+
+      def color_str_with_value(range_str:, range_value:)
+        str = nil
+        aqi_range_colors.keys.each do |color_key|
+          if color_key.cover? range_value.to_i # Super secred cover sauce
+            color = colors[aqi_range_colors[color_key]]
+            if config.mode == :irc
+              str = "\x03#{color}#{range_str[color_key]}\x03 "
+            elsif config.mode == :slack
+              str = "#{range_str[color_key]} "
             end
           end
         end
