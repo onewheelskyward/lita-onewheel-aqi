@@ -72,6 +72,15 @@ module Lita
           301..500 => ':no_entry_sign: :radioactive_sign: :no_entry_sign:' }
       end
 
+      def aqi_irc_emoji
+        { 0..50 => '🌳',
+          51..100 => '⚠️',
+          101..150 => '🔶',
+          151..200 => '🚫',
+          201..300 => '☣️',
+          301..500 => '🚫☣🚫' }
+      end
+
       def get_location(response)
         location = if response.matches[0].to_s.casecmp('aqi').zero?
                      ''
@@ -114,11 +123,11 @@ module Lita
           reply += color_str_with_value(range_str: aqi_range_labels, range_value: aqi['data']['iaqi']['pm25']['v'].to_s)
         end
 
-        if aqi['data']['iaqi']['pm10']
-          reply += 'pm10: ' + color_str(aqi['data']['iaqi']['pm10']['v'].to_s) + '  '
-        end
         if aqi['data']['iaqi']['pm25']
           reply += 'pm25: ' + color_str(aqi['data']['iaqi']['pm25']['v'].to_s) + '  '
+        end
+        if aqi['data']['iaqi']['pm10']
+          reply += 'pm10: ' + color_str(aqi['data']['iaqi']['pm10']['v'].to_s) + '  '
         end
 
         reply += banner_str
@@ -185,9 +194,9 @@ module Lita
           if color_key.cover? range_value.to_i # Super secred cover sauce
             color = colors[aqi_range_colors[color_key]]
             if config.mode == :irc
-              str = "\x03#{color}#{range_str[color_key]}\x03 "
+              str = "#{aqi_irc_emoji[color_key]} \x03#{color}#{range_str[color_key]}\x03 #{aqi_irc_emoji[color_key]} "
             elsif config.mode == :slack
-              str = "#{aqi_slack_emoji[color_key]} #{range_str[color_key]} #{aqi_slack_emoji[color_key]}  "
+              str = "#{aqi_slack_emoji[color_key]} #{range_str[color_key]} #{aqi_slack_emoji[color_key]} "
             end
           end
         end
