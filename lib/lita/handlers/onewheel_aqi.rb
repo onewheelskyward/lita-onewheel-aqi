@@ -109,8 +109,10 @@ module Lita
         if config.mode == :irc
           reply += color_str_with_value(range_str: aqi_range_labels, range_value: aqi['data']['iaqi']['pm25']['v'].to_s)
           banner_str = "\x03#{colors[:grey]}#{banner_str}\x03"
+        elsif config.mode == :slack
+          reply += color_str_with_value(range_str: aqi_range_labels, range_value: aqi['data']['iaqi']['pm25']['v'].to_s)
+          banner_str = "\x03#{colors[:grey]}#{banner_str}\x03"
         end
-
 
         if aqi['data']['iaqi']['pm10']
           reply += 'pm10: ' + color_str(aqi['data']['iaqi']['pm10']['v'].to_s) + '  '
@@ -133,6 +135,7 @@ module Lita
         banner_str = "(#{aqi['data']['city']['url']})"
 
         if config.mode == :irc
+          reply += color_str_with_value(range_str: aqi_range_labels, range_value: aqi['data']['iaqi']['pm25']['v'].to_s)
           banner_str = "\x03#{colors[:grey]}#{banner_str}\x03"
         end
 
@@ -160,13 +163,13 @@ module Lita
       end
 
       def color_str(str, value = nil)
-        if config.mode == :irc
-          if value.nil?
-            value = str.to_i
-          end
+        if value.nil?
+          value = str.to_i
+        end
 
-          aqi_range_colors.keys.each do |color_key|
-            if color_key.cover? value # Super secred cover sauce
+        aqi_range_colors.keys.each do |color_key|
+          if color_key.cover? value # Super secred cover sauce
+            if config.mode == :irc
               color = colors[aqi_range_colors[color_key]]
               str = "\x03#{color}#{str}\x03"
             end
