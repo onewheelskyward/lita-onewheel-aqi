@@ -131,8 +131,9 @@ module Lita
         end
 
         updated_at = Time.parse aqi['data']['time']['s']
+        diff = (Time.now - updated_at).to_i / 60
 
-        reply += "updated #{updated_at.strftime("%H:%M %-m/%-d/%y")} #{banner_str}"
+        reply += "updated #{diff} minutes ago.  #{banner_str}"
 
         response.reply reply
       end
