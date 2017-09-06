@@ -130,7 +130,9 @@ module Lita
           reply += 'pm10: ' + color_str(aqi['data']['iaqi']['pm10']['v'].to_s) + '  '
         end
 
-        reply += banner_str
+        updated_at = Time.parse aqi['data']['time']['s']
+
+        reply += "updated #{updated_at.strftime("%H:%M %-m/%-d/%y")} #{banner_str}"
 
         response.reply reply
       end
@@ -172,16 +174,13 @@ module Lita
       end
 
       def color_str(str, value = nil)
-        if value.nil?
-          value = str.to_i
-        end
+        value = str.to_i if value.nil?
 
         aqi_range_colors.keys.each do |color_key|
-          if color_key.cover? value # Super secred cover sauce
-            if config.mode == :irc
-              color = colors[aqi_range_colors[color_key]]
-              str = "\x03#{color}#{str}\x03"
-            end
+          next unless color_key.cover? value # Super secred cover sauce
+          if config.mode == :irc
+            color = colors[aqi_range_colors[color_key]]
+            str = "\x03#{color}#{str}\x03"
           end
         end
 
@@ -191,13 +190,12 @@ module Lita
       def color_str_with_value(range_str:, range_value:)
         str = nil
         aqi_range_colors.keys.each do |color_key|
-          if color_key.cover? range_value.to_i # Super secred cover sauce
-            color = colors[aqi_range_colors[color_key]]
-            if config.mode == :irc
-              str = "#{aqi_irc_emoji[color_key]} \x03#{color}#{range_str[color_key]}\x03 #{aqi_irc_emoji[color_key]} "
-            elsif config.mode == :slack
-              str = "#{aqi_slack_emoji[color_key]} #{range_str[color_key]} #{aqi_slack_emoji[color_key]} "
-            end
+          next unless color_key.cover? range_value.to_i # Super secred cover sauce
+          color = colors[aqi_range_colors[color_key]]
+          if config.mode == :irc
+            str = "#{aqi_irc_emoji[color_key]} \x03#{color}#{range_str[color_key]}\x03 #{aqi_irc_emoji[color_key]} "
+          elsif config.mode == :slack
+            str = "#{aqi_slack_emoji[color_key]} #{range_str[color_key]} #{aqi_slack_emoji[color_key]} "
           end
         end
 
