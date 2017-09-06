@@ -1,6 +1,6 @@
 Gem::Specification.new do |spec|
   spec.name          = 'lita-onewheel-aqi'
-  spec.version       = '2.0.8'
+  spec.version       = '2.0.9'
   spec.authors       = ['Andrew Kreps']
   spec.email         = ['andrew.kreps@gmail.com']
   spec.description   = 'AQI data retrieval bot'
@@ -21,6 +21,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rake', '~> 10.4'
   spec.add_development_dependency 'rack-test', '~> 0.6'
   spec.add_development_dependency 'rspec', '~> 3.0'
+  spec.add_development_dependency 'timecop', '~> 0'
 
   spec.add_runtime_dependency 'geocoder', '~> 1.2'
   spec.add_runtime_dependency 'rest-client', '~> 1.8'

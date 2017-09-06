@@ -170,7 +170,10 @@ module Lita
           reply += 'temp: ' + aqi['data']['iaqi']['t']['v'].to_s + 'C  '
         end
 
-        reply += banner_str
+        updated_at = Time.parse aqi['data']['time']['s']
+        diff = (Time.now - updated_at).to_i / 60
+
+        reply += "updated #{color_str(diff.to_s)} minutes ago.  #{banner_str}"
         response.reply reply
       end
 
