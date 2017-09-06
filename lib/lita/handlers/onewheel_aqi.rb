@@ -82,7 +82,7 @@ module Lita
       end
 
       def get_location(response)
-        location = if response.matches[0].to_s.casecmp('aqi').zero?
+        location = if response.matches[0][0].to_s.length == 1
                      ''
                    else
                      response.matches[0][0]
@@ -125,6 +125,8 @@ module Lita
 
         if aqi['data']['iaqi']['pm25']
           reply += 'pm25: ' + color_str(aqi['data']['iaqi']['pm25']['v'].to_s) + '  '
+          ugm3 = pm25_to_ugm3 aqi['data']['iaqi']['pm25']['v'].to_s
+          reply += "#{ugm3} µgm3(est)  "
         end
         if aqi['data']['iaqi']['pm10']
           reply += 'pm10: ' + color_str(aqi['data']['iaqi']['pm10']['v'].to_s) + '  '
@@ -160,11 +162,13 @@ module Lita
         if aqi['data']['iaqi']['p']
           reply += 'pressure: ' + aqi['data']['iaqi']['p']['v'].to_s + 'mb  '
         end
-        if aqi['data']['iaqi']['pm10']
-          reply += 'pm10: ' + color_str(aqi['data']['iaqi']['pm10']['v'].to_s) + '  '
-        end
         if aqi['data']['iaqi']['pm25']
           reply += 'pm25: ' + color_str(aqi['data']['iaqi']['pm25']['v'].to_s) + '  '
+          ugm3 = pm25_to_ugm3 aqi['data']['iaqi']['pm25']['v']
+          reply += "#{ugm3} µgm3(est)  "
+        end
+        if aqi['data']['iaqi']['pm10']
+          reply += 'pm10: ' + color_str(aqi['data']['iaqi']['pm10']['v'].to_s) + '  '
         end
         if aqi['data']['iaqi']['t']
           reply += 'temp: ' + aqi['data']['iaqi']['t']['v'].to_s + 'C  '
@@ -206,17 +210,6 @@ module Lita
         str
       end
 
-      def extract_pmtwofive(aqi)
-        Lita.logger.debug "extract_pmtwofive with #{aqi}"
-        pm25 = ''
-        pm25 = if aqi['data']['iaqi']['pm25']
-                 aqi['data']['iaqi']['pm25']['v']
-               else
-                 "No PM2.5 data for #{aqi['data']['city']['name']}"
-               end
-        pm25
-      end
-
       # Geographical stuffs
       # Now with less caching!
       def optimistic_geo_wrapper(query)
@@ -236,6 +229,28 @@ module Lita
         { name: geocoded['formatted_address'],
           lat: geocoded['geometry']['location']['lat'],
           lng: geocoded['geometry']['location']['lng'] }
+      end
+
+      # Particulate Matter 2.5 to micrograms per cubic meter
+      def pm25_to_ugm3(pm25)
+        ranges = {
+          0..50 => [0, 50, 0.0, 12.0],
+          51..100 => [51, 100, 12.1, 35.4],
+          101..150 => [101, 150, 35.5, 55.4],
+          151..200 => [151, 200, 55.5, 150.4],
+          201..300 => [201, 300, 150.5, 250.4],
+          301..500 => [301, 500, 250.5, 500]
+        }
+        ranges.keys.each do |range_key|
+          next unless range_key.cover? pm25.to_i
+          low = ranges[range_key][0]
+          high = ranges[range_key][1]
+          min = ranges[range_key][2]
+          max = ranges[range_key][3]
+          step = (max - min) / (high - low)
+          ugm3 = (pm25.to_i - low) * step + min
+          return ugm3.round(2)
+        end
       end
     end
 
