@@ -126,7 +126,7 @@ module Lita
         if aqi['data']['iaqi']['pm25']
           reply += 'pm25: ' + color_str(aqi['data']['iaqi']['pm25']['v'].to_s) + '  '
           ugm3 = pm25_to_ugm3 aqi['data']['iaqi']['pm25']['v'].to_s
-          reply += "µgm3(est): #{ugm3}  "
+          reply += "µg/m³(est): #{ugm3}  "
         end
         if aqi['data']['iaqi']['pm10']
           reply += 'pm10: ' + color_str(aqi['data']['iaqi']['pm10']['v'].to_s) + '  '
@@ -165,7 +165,7 @@ module Lita
         if aqi['data']['iaqi']['pm25']
           reply += 'pm25: ' + color_str(aqi['data']['iaqi']['pm25']['v'].to_s) + '  '
           ugm3 = pm25_to_ugm3 aqi['data']['iaqi']['pm25']['v']
-          reply += "µgm3(est): #{ugm3}  "
+          reply += "µg/m³(est): #{ugm3}  "
         end
         if aqi['data']['iaqi']['pm10']
           reply += 'pm10: ' + color_str(aqi['data']['iaqi']['pm10']['v'].to_s) + '  '
