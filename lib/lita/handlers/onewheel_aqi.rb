@@ -17,14 +17,20 @@ module Lita
       route /^aqi$/i,
             :get_aqi,
             command: true
-      route /^aqideets\s*(.*)$/i,
+      route /^aqideets$/i,
             :get_aqi_deets,
             command: true,
             help: { '!aqideets [location]' => 'Gives you moar datas.' }
-      route /^aqidetails\s*(.*)$/i,
+      route /^aqideets\s+(.*)$/i,
+            :get_aqi_deets,
+            command: true
+      route /^aqidetails\s+(.*)$/i,
             :get_aqi_deets,
             command: true,
-            help: { '!aqideets [location]' => 'Gives you moar datas.' }
+            help: { '!aqidetails [location]' => 'Gives you moar datas.' }
+      route /^aqidetails$/i,
+            :get_aqi_deets,
+            command: true
 
       # IRC colors.
       def colors
@@ -88,7 +94,7 @@ module Lita
       def get_location(response, persist = true)
         user = response.user
         query = nil
-        if response.matches[0].is_a?(Array) and response.matches[0].empty?
+        if response.matches[0].is_a?(Array) and !response.matches[0].empty?
           query = response.matches[0][0]
         end
 

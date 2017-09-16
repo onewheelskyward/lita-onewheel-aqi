@@ -30,6 +30,23 @@ describe Lita::Handlers::OnewheelAqi, lita_handler: true do
         }
       }]
     )
+
+    Geocoder::Lookup::Test.add_stub(
+      'Beaverton', [{
+        'formatted_address' => 'Beaverton, OR, USA',
+        'geometry' => {
+          'location' => {
+            'lat' => 45.523452,
+            'lng' => -122.976207,
+            'address' => 'Beaverton, OR, USA',
+            'state' => 'Oregon',
+            'state_code' => 'OR',
+            'country' => 'United States',
+            'country_code' => 'US'
+          }
+        }
+      }]
+    )
   end
 
   it 'queries the aqi' do
@@ -40,5 +57,15 @@ describe Lita::Handlers::OnewheelAqi, lita_handler: true do
   it 'queries the aqideets' do
     send_command 'aqideets'
     expect(replies.last).to eq("AQI for Portland, OR, USA, ⚠️ 08Moderate ⚠️ humidity: 11%  pressure: 1014mb  pm25: 0876  µg/m³(est): 23.99  pm10: 0340  temp: 34.65C  updated 0860 minutes ago.  14(http://aqicn.org/city/usa/oregon/government-camp-multorpor-visibility/)")
+  end
+
+  it 'queries the aqi by location' do
+    send_command 'aqi Beaverton'
+    expect(replies.last).to include("AQI for Beaverton, OR, USA, ⚠️ 08Moderate ⚠️ pm25: 0876  µg/m³(est): 23.99  pm10: 0340  updated 0860 minutes ago.  14(http://aqicn.org/city/usa/oregon/government-camp-multorpor-visibility/)")
+  end
+
+  it 'queries the aqideets' do
+    send_command 'aqideets Beaverton'
+    expect(replies.last).to eq("AQI for Beaverton, OR, USA, ⚠️ 08Moderate ⚠️ humidity: 11%  pressure: 1014mb  pm25: 0876  µg/m³(est): 23.99  pm10: 0340  temp: 34.65C  updated 0860 minutes ago.  14(http://aqicn.org/city/usa/oregon/government-camp-multorpor-visibility/)")
   end
 end
