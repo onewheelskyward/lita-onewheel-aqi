@@ -8,6 +8,8 @@ module Lita
       config :distance
       config :mode, default: :irc
 
+      REDIS_KEY = 'onewheel-aqi'
+
       route /^aqi\s+(.*)$/i,
             :get_aqi,
             command: true,
@@ -81,18 +83,47 @@ module Lita
           301..500 => '🚫☣🚫' }
       end
 
-      def get_location(response)
-        location = if response.matches[0][0].to_s.length == 1
-                     ''
-                   else
-                     response.matches[0][0]
-                   end
+      # Perform a geocoder lookup based on a) the query or b) the user's serialized state.
+      # If neither of those exist, default to config location.
+      def get_location(response, persist = true)
+        user = response.user
+        query = nil
+        if response.matches[0].is_a?(Array) and response.matches[0].empty?
+          query = response.matches[0][0]
+        end
 
-        puts "get_location: '#{location}'"
-        location = 'Portland, OR' if location.nil? || location.empty?
+        Lita.logger.debug "Performing geolookup for '#{user.name}' for '#{query}'"
 
-        loc = geo_lookup(location)
-        puts loc.inspect
+        if query.nil? or query.empty?
+          Lita.logger.debug "No query specified, pulling from redis #{REDIS_KEY}, #{user.name}"
+          serialized_geocoded = redis.hget(REDIS_KEY, user.name)
+          unless serialized_geocoded == 'null' or serialized_geocoded.nil?
+            geocoded = JSON.parse(serialized_geocoded)
+          end
+          Lita.logger.debug "Cached location: #{geocoded.inspect}"
+        end
+
+        query = (query.nil?)? 'Portland, OR' : query
+        Lita.logger.debug "q & g #{query.inspect} #{geocoded.inspect}"
+
+        unless geocoded
+          Lita.logger.debug "Redis hget failed, performing lookup for #{query}"
+          geocoded = optimistic_geo_wrapper query
+          Lita.logger.debug "Geolocation found.  '#{geocoded.inspect}' failed, performing lookup"
+          if persist
+            redis.hset(REDIS_KEY, user.name, geocoded.to_json)
+          end
+        end
+
+        Lita.logger.debug "geocoded: '#{geocoded}'"
+        loc = {
+          name: geocoded['formatted_address'],
+          lat: geocoded['geometry']['location']['lat'],
+          lng: geocoded['geometry']['location']['lng']
+        }
+
+        Lita.logger.debug "loc: '#{loc}'"
+
         loc
       end
 
@@ -218,17 +249,6 @@ module Lita
         puts result.inspect
         geocoded = result[0].data if result[0]
         geocoded
-      end
-
-      def geo_lookup(query)
-        puts "Location lookup #{query.inspect}"
-        geocoded = optimistic_geo_wrapper query
-
-        query = 'Portland, OR' if (query.nil? || query.empty?) && geocoded.nil?
-
-        { name: geocoded['formatted_address'],
-          lat: geocoded['geometry']['location']['lat'],
-          lng: geocoded['geometry']['location']['lng'] }
       end
 
       # Particulate Matter 2.5 to micrograms per cubic meter
