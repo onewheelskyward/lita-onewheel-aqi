@@ -1,0 +1,63 @@
+{
+  "status": "ok",
+  "data": {
+    "aqi": 875,
+    "idx": 2555,
+    "attributions": [
+      {
+        "url": "http://dpccairdata.com/",
+        "name": "Delhi Pollution Control Commitee (Government of NCT of Delhi)"
+      },
+      {
+        "url": "http://cpcb.nic.in/",
+        "name": "CPCB - India Central Pollution Control Board"
+      }
+    ],
+    "city": {
+      "geo": [
+        28.6682245,
+        77.1167427
+      ],
+      "name": "Punjabi Bagh, Delhi",
+      "url": "http://aqicn.org/city/delhi/punjabi-bagh/"
+    },
+    "dominentpol": "pm10",
+    "iaqi": {
+      "co": {
+        "v": 47
+      },
+      "h": {
+        "v": 100
+      },
+      "no2": {
+        "v": 78
+      },
+      "o3": {
+        "v": 6.9
+      },
+      "p": {
+        "v": 1016
+      },
+      "pm10": {
+        "v": 875
+      },
+      "pm25": {
+        "v": 641
+      },
+      "so2": {
+        "v": 0.9
+      },
+      "t": {
+        "v": 16.15
+      },
+      "w": {
+        "v": 1.32
+      }
+    },
+    "time": {
+      "s": "2017-11-08 09:00:00",
+      "tz": "+05:30",
+      "v": 1510131600
+    }
+  }
+}

@@ -59,7 +59,7 @@ module Lita
           101..150 => :orange,
           151..200 => :red,
           201..300 => :purple,
-          301..500 => :pink }
+          301..999 => :pink }
       end
 
       def aqi_range_labels
@@ -68,7 +68,7 @@ module Lita
           101..150 => 'Unhealthy for Sensitive Groups',
           151..200 => 'Unhealthy for All',
           201..300 => 'Very Unhealthy',
-          301..500 => 'Hazardous' }
+          301..999 => 'Hazardous' }
       end
 
       def aqi_slack_emoji
@@ -77,7 +77,7 @@ module Lita
           101..150 => ':large_orange_diamond:',
           151..200 => ':no_entry_sign:',
           201..300 => ':radioactive_sign:',
-          301..500 => ':no_entry_sign: :radioactive_sign: :no_entry_sign:' }
+          301..999 => ':no_entry_sign: :radioactive_sign: :no_entry_sign:' }
       end
 
       def aqi_irc_emoji
@@ -86,7 +86,7 @@ module Lita
           101..150 => '🔶',
           151..200 => '🚫',
           201..300 => '☣️',
-          301..500 => '🚫☣🚫' }
+          301..999 => '🚫☣🚫' }
       end
 
       # Perform a geocoder lookup based on a) the query or b) the user's serialized state.
