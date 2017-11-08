@@ -78,6 +78,6 @@ describe Lita::Handlers::OnewheelAqi, lita_handler: true do
   it 'dehli' do
     mock('dehli')
     send_command 'aqi'
-    expect(replies.last).to eq("AQI for Portland, OR, USA, 🚫☣🚫 13Hazardous 🚫☣🚫 pm25: 13641  µg/m³(est): [0..50, 51..100, 101..150, 151..200, 201..300, 301..500]  pm10: 13875  updated -127740 minutes ago.  14(http://aqicn.org/city/delhi/punjabi-bagh/)")
+    expect(replies.last).to eq("AQI for Portland, OR, USA, 🚫☣🚫 13Hazardous 🚫☣🚫 pm25: 13641  µg/m³(est): 615.1  pm10: 13875  updated -127740 minutes ago.  14(http://aqicn.org/city/delhi/punjabi-bagh/)")
   end
 end
