@@ -191,14 +191,14 @@ module Lita
         end
 
         if aqi['data']['iaqi']['co']
-          reply += 'co: ' + aqi['data']['iaqi']['co']['v'].to_s + '  '
+          reply += 'co²: ' + aqi['data']['iaqi']['co']['v'].to_s + '  '
         end
         if aqi['data']['iaqi']['h']
           reply += 'humidity: ' + aqi['data']['iaqi']['h']['v'].to_s + '%  '
         end
-        if aqi['data']['iaqi']['p']
-          reply += 'pressure: ' + aqi['data']['iaqi']['p']['v'].to_s + 'mb  '
-        end
+        # if aqi['data']['iaqi']['p']
+        #   reply += 'pressure: ' + aqi['data']['iaqi']['p']['v'].to_s + 'mb  '
+        # end
         if aqi['data']['iaqi']['pm25']
           reply += 'pm25: ' + color_str(aqi['data']['iaqi']['pm25']['v'].to_s) + '  '
           ugm3 = pm25_to_ugm3 aqi['data']['iaqi']['pm25']['v']

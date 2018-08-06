@@ -60,7 +60,7 @@ describe Lita::Handlers::OnewheelAqi, lita_handler: true do
   it 'queries the aqideets' do
     mock('Output')
     send_command 'aqideets'
-    expect(replies.last).to eq("AQI for Portland, OR, USA, ⚠️ 08Moderate ⚠️ humidity: 11%  pressure: 1014mb  pm25: 0876  µg/m³(est): 23.99  pm10: 0340  temp: 34.65C  updated 0860 minutes ago.  14(http://aqicn.org/city/usa/oregon/government-camp-multorpor-visibility/)")
+    expect(replies.last).to eq("AQI for Portland, OR, USA, ⚠️ 08Moderate ⚠️ humidity: 11%  pm25: 0876  µg/m³(est): 23.99  pm10: 0340  temp: 34.65C  updated 0860 minutes ago.  14(http://aqicn.org/city/usa/oregon/government-camp-multorpor-visibility/)")
   end
 
   it 'queries the aqi by location' do
@@ -72,12 +72,12 @@ describe Lita::Handlers::OnewheelAqi, lita_handler: true do
   it 'queries the aqideets' do
     mock('Output')
     send_command 'aqideets Beaverton'
-    expect(replies.last).to eq("AQI for Beaverton, OR, USA, ⚠️ 08Moderate ⚠️ humidity: 11%  pressure: 1014mb  pm25: 0876  µg/m³(est): 23.99  pm10: 0340  temp: 34.65C  updated 0860 minutes ago.  14(http://aqicn.org/city/usa/oregon/government-camp-multorpor-visibility/)")
+    expect(replies.last).to eq("AQI for Beaverton, OR, USA, ⚠️ 08Moderate ⚠️ humidity: 11%  pm25: 0876  µg/m³(est): 23.99  pm10: 0340  temp: 34.65C  updated 0860 minutes ago.  14(http://aqicn.org/city/usa/oregon/government-camp-multorpor-visibility/)")
   end
 
   it 'dehli' do
     mock('dehli')
     send_command 'aqi'
-    expect(replies.last).to eq("AQI for Portland, OR, USA, 🚫☣🚫 13Hazardous 🚫☣🚫 pm25: 13641  µg/m³(est): 615.1  pm10: 13875  updated -127740 minutes ago.  14(http://aqicn.org/city/delhi/punjabi-bagh/)")
+    expect(replies.last).to eq("AQI for Portland, OR, USA, 🚫☣🚫 13Hazardous 🚫☣🚫 pm25: 13641  µg/m³(est): 615.1  pm10: 13875  updated -127800 minutes ago.  14(http://aqicn.org/city/delhi/punjabi-bagh/)")
   end
 end
