@@ -149,6 +149,11 @@ module Lita
         loc = get_location(response)
         aqi = get_observed_aqi(loc)
 
+        if aqi['status'] == 'nug'
+          response.reply "Status is 'nug' for aqi station near #{loc['name']}"
+          return
+        end
+
         banner_str = "(#{aqi['data']['city']['url']})"
 
         reply = "AQI for #{loc[:name]}, "
