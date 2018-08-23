@@ -113,10 +113,10 @@ module Lita
         Lita.logger.debug "q & g #{query.inspect} #{geocoded.inspect}"
 
         unless geocoded
-          uri = "https://atlas.p3k.io/api/geocode?input={URI.escape query}"
+          uri = "https://atlas.p3k.io/api/geocode?input=#{URI.escape query}"
           Lita.logger.debug "Redis hget failed, performing lookup for #{query} on #{uri}"
           # geocoded = optimistic_geo_wrapper query, config.geocoder_key
-          geocoded = JSON.parse RestClient.get("https://atlas.p3k.io/api/geocode?input=#{URI.escape query}")
+          geocoded = JSON.parse RestClient.get(uri)
           Lita.logger.debug "Geolocation found.  '#{geocoded.inspect}' failed, performing lookup"
           if persist
             redis.hset(REDIS_KEY, user, geocoded.to_json)
