@@ -150,7 +150,12 @@ module Lita
         aqi = get_observed_aqi(loc)
 
         if aqi['status'] == 'nug'
-          response.reply "Status is 'nug' for aqi station near #{loc['name']}"
+          Lita.logger.info "Status is 'nug' for aqi station near #{loc['name']}"
+          aqi = get_observed_aqi(loc)
+        end
+
+        if aqi['status'] == 'nug'
+          response.reply "Reply hazy, try again."
           return
         end
 
