@@ -253,6 +253,7 @@ module Lita
         # end
         loc = get_location(response)
         aqi = get_observed_aqi(loc)
+        response.reply "Initializing timer for #{aqi['data']['city']['name']}"
 
         t = Lita::Timer.new(interval: 300, recurring: true) {|timer|
           stored = redis.hget(REDIS_KEY, 'monitored')
