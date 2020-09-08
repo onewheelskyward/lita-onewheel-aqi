@@ -251,8 +251,15 @@ module Lita
         #   Lita.logger.debug "Setting @timer to false"
         #   @@timer = false
         # end
-        t = Lita::Timer.new(interval: 5, recurring: true) {|timer|
-                                              response.reply "yo"
+        loc = get_location(response)
+        aqi = get_observed_aqi(loc)
+
+        t = Lita::Timer.new(interval: 300, recurring: true) {|timer|
+          stored = redis.hget(REDIS_KEY, 'monitored')
+          new = aqi['data']['iaqi']['pm25']['v'].to_s
+          Lita.logger.debug "Stored = #{stored}, new = #{new}"
+          redis.hset(REDIS_KEY, 'monitored', new)
+          response.reply new
         }
         t.start
         response.reply @timer.to_s
