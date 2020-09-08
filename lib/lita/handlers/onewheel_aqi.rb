@@ -9,6 +9,7 @@ module Lita
       config :mode, default: :irc
 
       REDIS_KEY = 'onewheel-aqi'
+      @timer = nil
 
       route /^aqi\s+(.*)$/i,
             :get_aqi,
@@ -30,6 +31,9 @@ module Lita
             help: { '!aqidetails [location]' => 'Gives you moar datas.' }
       route /^aqidetails$/i,
             :get_aqi_deets,
+            command: true
+      route /^aqimonitor$/i,
+            :do_timer,
             command: true
 
       # IRC colors.
@@ -234,6 +238,16 @@ module Lita
 
         reply += "updated #{color_str(diff.to_s)} minutes ago.  #{banner_str}"
         response.reply reply
+      end
+
+      def do_timer(response)
+        if !@timer
+          @timer = true
+        else
+          @timer = false
+        end
+
+        response.reply @timer
       end
 
       def color_str(str, value = nil)
