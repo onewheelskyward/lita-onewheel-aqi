@@ -9,7 +9,7 @@ module Lita
       config :mode, default: :irc
 
       REDIS_KEY = 'onewheel-aqi'
-      @timer = nil
+      @@timer = nil
 
       route /^aqi\s+(.*)$/i,
             :get_aqi,
@@ -241,13 +241,16 @@ module Lita
       end
 
       def do_timer(response)
-        if !@timer
-          @timer = true
+        Lita.logger.debug "Current @timer: #{@@timer}"
+        if !@@timer
+          Lita.logger.debug "Setting @timer to true"
+          @@timer = true
         else
-          @timer = false
+          Lita.logger.debug "Setting @timer to false"
+          @@timer = false
         end
 
-        response.reply @timer
+        response.reply @timer.to_s
       end
 
       def color_str(str, value = nil)
