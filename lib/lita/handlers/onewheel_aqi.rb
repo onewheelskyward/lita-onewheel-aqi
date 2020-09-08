@@ -254,14 +254,14 @@ module Lita
         loc = get_location(response)
         aqi = get_observed_aqi(loc)
 
-        t = Lita::Timer.new(interval: 30, recurring: true) {|timer|
+        t = Lita::Timer.new(interval: 300, recurring: true) {|timer|
           stored = redis.hget(REDIS_KEY, 'monitored')
           new = aqi['data']['iaqi']['pm25']['v'].to_s
-          response.reply "Stored = #{stored}, new = #{new}"
+          # response.reply "Stored = #{stored}, new = #{new}"
           Lita.logger.debug "Stored = #{stored}, new = #{new}"
           redis.hset(REDIS_KEY, 'monitored', new)
           if new.to_i >= stored.to_i + 10 or new.to_i <= stored.to_i - 10
-              response.reply "Larger than 10 change #{stored} -> #{new}"
+              response.reply "AQI Larger than 10 change #{stored} -> #{new}"
           end
         }
         t.start
