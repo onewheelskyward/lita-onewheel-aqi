@@ -161,7 +161,7 @@ module Lita
 
         banner_str = '' #"(#{aqi['data']['city']['url']})"
 
-        reply = "AQI for #{loc[:name]}, "
+        reply = "AQI for #{aqi['data']['city']['name']}, "  # loc[:name]
 
         Lita.logger.debug "Config mode: #{config.mode.inspect}"
 
@@ -181,6 +181,7 @@ module Lita
           reply += 'pm10: ' + color_str(aqi['data']['iaqi']['pm10']['v'].to_s) + '  '
         end
 
+        # Turns out this is in localtime
         updated_at = Time.parse aqi['data']['time']['s']
         diff = (Time.now - updated_at).to_i / 60
 

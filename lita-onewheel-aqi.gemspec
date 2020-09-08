@@ -1,10 +1,6 @@
 Gem::Specification.new do |spec|
   spec.name          = 'lita-onewheel-aqi'
-<<<<<<< Updated upstream
-  spec.version       = '2.5.0'
-=======
-  spec.version       = '2.4.0'
->>>>>>> Stashed changes
+  spec.version       = '2.6.0'
   spec.authors       = ['Andrew Kreps']
   spec.email         = ['andrew.kreps@gmail.com']
   spec.description   = 'AQI data retrieval bot'
