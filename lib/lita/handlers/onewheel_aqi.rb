@@ -199,7 +199,7 @@ module Lita
           return
         end
 
-        reply = "AQI for #{loc[:name]}, "
+        reply = "AQI for #{aqi['data']['city']['name']}, "  # loc[:name]
 
         banner_str = "(#{aqi['data']['city']['url']})"
 
