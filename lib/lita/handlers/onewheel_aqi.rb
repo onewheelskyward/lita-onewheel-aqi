@@ -242,14 +242,19 @@ module Lita
 
       def do_timer(response)
         Lita.logger.debug "Current @timer: #{@@timer}"
-        if !@@timer
-          Lita.logger.debug "Setting @timer to true"
-          @@timer = true
-        else
-          Lita.logger.debug "Setting @timer to false"
-          @@timer = false
-        end
-
+        # if @@timer.nil?
+        #   Lita.logger.debug "Instantiating @@timer"
+          # @@timer = Lita::Timer(5, recurring: true) {|timer|
+          #   response.reply "testing"
+          # }
+        # else
+        #   Lita.logger.debug "Setting @timer to false"
+        #   @@timer = false
+        # end
+        t = Lita::Timer.new(interval: 5, recurring: true) {|timer|
+                                              response.reply "yo"
+        }
+        t.start
         response.reply @timer.to_s
       end
 
